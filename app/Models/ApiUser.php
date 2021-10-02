@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @property string $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $phone
+ * @property boolean $active
+ * @property string $email
+ * @property string $password
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string $deleted_at
+ */
+class ApiUser extends Model
+{
+    /**
+     * @var array
+     */
+    protected $fillable = ['id', 'first_name', 'last_name', 'phone', 'active', 'email', 'password', 'created_at', 'updated_at', 'deleted_at'];
+
+}
