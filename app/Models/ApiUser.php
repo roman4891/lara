@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,9 +19,20 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ApiUser extends Model
 {
-    /**
+    use HasFactory;
+        /**
      * @var array
      */
     protected $fillable = ['id', 'first_name', 'last_name', 'phone', 'active', 'email', 'password', 'created_at', 'updated_at', 'deleted_at'];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 }
