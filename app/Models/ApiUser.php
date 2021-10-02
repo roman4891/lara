@@ -20,7 +20,8 @@ use Illuminate\Database\Eloquent\Model;
 class ApiUser extends Model
 {
     use HasFactory;
-        /**
+
+    /**
      * @var array
      */
     protected $fillable = ['id', 'first_name', 'last_name', 'phone', 'active', 'email', 'password', 'created_at', 'updated_at', 'deleted_at'];
