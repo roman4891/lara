@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class User extends Controller
+class ApiUserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -80,5 +81,14 @@ class User extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function test(Request $request)
+    {
+//        exit(var_export($request));
+
+//        $request->toArray();
+
+        return response()->json($request->toArray());
     }
 }
