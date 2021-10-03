@@ -177,6 +177,7 @@ return [
 
         // My Providers
         Krlove\EloquentModelGenerator\Provider\GeneratorServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
 
     ],
 
