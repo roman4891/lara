@@ -18,8 +18,8 @@ class CreateUserTableCustom extends Migration
 
             $table->string('first_name');
             $table->string('last_name')->nullable();
-            $table->string('phone');
-            $table->boolean('active');
+            $table->string('phone')->nullable();
+            $table->boolean('active')->default(false);
             $table->string('email')->unique();
             $table->string('password')->nullable();;
 
