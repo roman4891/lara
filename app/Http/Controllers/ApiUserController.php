@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Requests\CreateApiUserRequest;
+use App\Helpers\Requests\UpdateApiUserRequest;
 use App\Models\ApiUser;
 use App\Repositories\ApiUserRepositoryInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -17,13 +20,15 @@ class ApiUserController extends Controller
     }
 
 
-    public function list(Request $request)
+    public function list(Request $request): JsonResponse
     {
         $result = $this->apiUserRepository->findAllApiUsers();
 
-//        var_dump($result);
+        if ($result) {
+            return response()->json([$result], 200);
+        }
 
-        return response()->json($result);
+        return response()->json([], 402);
     }
 
     /**
@@ -39,22 +44,20 @@ class ApiUserController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param CreateApiUserRequest $request
+     * @return JsonResponse
      */
-    public function create()
+    public function create(CreateApiUserRequest $request): JsonResponse
     {
-        //
-    }
+        $data = $request->innerValidated($request);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        $id = $this->apiUserRepository->createApiUser($data);
+
+        if ($id) {
+            return response()->json([$id], 200);
+        }
+
+        return response()->json([], 400);
     }
 
     /**
@@ -65,32 +68,30 @@ class ApiUserController extends Controller
      */
     public function show($id)
     {
-        $result = $this->apiUserRepository->findApiUser();
+        $result = $this->apiUserRepository->findApiUser($id);
+
+        if ($result) {
+            return response()->json($result, 200);
+        }
 
         return response()->json($result);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateApiUserRequest $request
+     * @return JsonResponse
      */
-    public function edit($id)
+    public function update(UpdateApiUserRequest $request): JsonResponse
     {
-        //
-    }
+        $data = $request->innerValidated($request);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        $id = $this->apiUserRepository->updateApiUser($data);
+
+        if ($id) {
+            return response()->json(['id' => $data['id']], 200);
+        }
+
+        return response()->json([], 400);
     }
 
     /**
@@ -108,10 +109,6 @@ class ApiUserController extends Controller
 
     public function test(Request $request)
     {
-//        exit(var_export($request));
-
-//        $request->toArray();
-
         $user = new ApiUser();
         $user->fill(['name' => 'Amsterdam to Frankfurt']);
         $user->save();

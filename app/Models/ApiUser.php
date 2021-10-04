@@ -23,7 +23,7 @@ class ApiUser extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'api_user';
+    protected $table = 'api_users';
 
     protected $primaryKey = 'id';
 

@@ -8,11 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class ApiUserRepository implements ApiUserRepositoryInterface
 {
+    private ApiUser $apiUser;
+
+    public function __construct(ApiUser $apiUser)
+    {
+        $this->apiUser = $apiUser;
+    }
 
     /**
      * @return mixed
      */
-    public function getFilteredApiUsers()
+    public function getFilteredApiUsers(...$params)
     {
         // TODO: Implement getFilteredApiUsers() method.
     }
@@ -22,22 +28,20 @@ class ApiUserRepository implements ApiUserRepositoryInterface
      */
     public function findAllApiUsers(): ?Collection
     {
-        return $this->userModel::all();
+        return $this->apiUser::all();
     }
 
     /**
      * @return mixed
      */
-    public function findApiUser($id = 'b17298b8-009e-3815-a0c7-dacf2179c70e')
+    public function findApiUser($id)
     {
-//        ApiUser::firstOrCreate
-
         $query = DB::table('api_users')
             ->where('id', '=', $id);
 
         $result = $query->first();
 
-        if($result) {
+        if ($result) {
             return $result;
         }
 
@@ -47,17 +51,33 @@ class ApiUserRepository implements ApiUserRepositoryInterface
     /**
      * @return mixed
      */
-    public function createApiUser()
+    public function createApiUser(array $data): ?string
     {
-        // TODO: Implement createApiUser() method.
+        // Почему не могу испольовать create?
+        // ApiUser::create...
+        $id = DB::table('api_users')->insertGetId($data);
+
+        if ($id) {
+            return $id;
+        }
+
+        return null;
     }
 
     /**
      * @return mixed
      */
-    public function updateApiUser()
+    public function updateApiUser($data): ?int
     {
-        // TODO: Implement updateApiUser() method.
+        $affected = DB::table('api_users')
+            ->where('id', '=', $data['id'])
+            ->update($data);
+
+        if ($affected) {
+            return $affected;
+        }
+
+        return null;
     }
 
     /**

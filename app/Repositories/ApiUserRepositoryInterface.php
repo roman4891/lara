@@ -2,19 +2,19 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
+use App\Helpers\Requests\CreateApiUserCommand;
 
 interface ApiUserRepositoryInterface {
 
-    public function getFilteredApiUsers();
+    public function getFilteredApiUsers(...$params);
 
     public function findAllApiUsers();
 
-    public function findApiUser();
+    public function findApiUser($id);
 
-    public function createApiUser();
+    public function createApiUser(array $data);
 
-    public function updateApiUser();
+    public function updateApiUser(array $data);
 
     public function softDeleteApiUser($id);
 
