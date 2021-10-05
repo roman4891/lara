@@ -15,15 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
-Route::post('/api_user/test', [ApiUserController::class, 'test']);
 
 Route::get('/api_user/all', [ApiUserController::class, 'list']);
+Route::get('/api_user/search', [ApiUserController::class, 'searchApiUsers']);
 Route::get('/api_user/show/{id}', [ApiUserController::class, 'show']);
 Route::post('/api_user/create', [ApiUserController::class, 'create']);
-Route::post('/api_user/update', [ApiUserController::class, 'update']);
-Route::delete('/api_user/delete/{id}', [ApiUserController::class, 'destroy']);
+Route::patch('/api_user/update', [ApiUserController::class, 'update']);
+Route::delete('/api_user/delete', [ApiUserController::class, 'delete']);
