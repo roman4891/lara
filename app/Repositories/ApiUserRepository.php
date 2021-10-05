@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\ApiUser;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -18,9 +19,28 @@ class ApiUserRepository implements ApiUserRepositoryInterface
     /**
      * @return mixed
      */
-    public function getFilteredApiUsers(...$params)
+    public function getFilteredApiUsers(array $params): ?Collection
     {
-        // TODO: Implement getFilteredApiUsers() method.
+        $needed = $params['needed'] ?? '';
+        $sort = $params['sort'] ?? 'created_at';
+        $limit = $params['limit'] ?? 10;
+        $offset = $params['offset'] ?? 0;
+        $order = $params['order'] ?? 'asc';
+
+        $query = DB::table('api_users')
+            ->where('first_name', 'like', '%'."$needed".'%')
+            ->orWhere('email', 'like', '%'."$needed".'%')
+            ->orderBy("$sort", "$order")
+            ->offset($offset)
+            ->limit($limit);
+
+        $result = $query->get();
+
+        if ($result) {
+            return $result;
+        }
+
+        return null;
     }
 
     /**
@@ -34,7 +54,7 @@ class ApiUserRepository implements ApiUserRepositoryInterface
     /**
      * @return mixed
      */
-    public function findApiUser($id)
+    public function findApiUser($id): ?User
     {
         $query = DB::table('api_users')
             ->where('id', '=', $id);
@@ -84,13 +104,13 @@ class ApiUserRepository implements ApiUserRepositoryInterface
      * @param $id
      * @return mixed
      */
-    public function softDeleteApiUser($id = 'b17298b8-009e-3815-a0c7-dacf2179c70e')
+    public function softDeleteApiUser(string $id): ?int
     {
-        $result = DB::table('users')
-            ->where('id', '=', $id)
-            ->delete();
+//        $result = DB::table('users')
+//            ->where('id', '=', $id)
+//            ->delete();
 
-//        ApiUser::destroy($id);
+         $result = ApiUser::destroy($id);
 
         if (isset($result)) {
             return $result;
@@ -103,8 +123,16 @@ class ApiUserRepository implements ApiUserRepositoryInterface
      * @param $id
      * @return mixed
      */
-    public function forceDeleteApiUser($id)
+    public function forceDeleteApiUser($id): ?int
     {
-        // TODO: Implement forceDeleteApiUser() method.
+        $result = DB::table('users')
+            ->where('id', '=', $id)
+            ->delete();
+
+        if (isset($result)) {
+            return $result;
+        }
+
+        return null;
     }
 }

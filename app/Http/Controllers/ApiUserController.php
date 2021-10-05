@@ -3,23 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Requests\CreateApiUserRequest;
+use App\Helpers\Requests\DeleteApiUserRequest;
+use App\Helpers\Requests\SearchApiUsersRequest;
 use App\Helpers\Requests\UpdateApiUserRequest;
 use App\Models\ApiUser;
 use App\Repositories\ApiUserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Ramsey\Uuid\Uuid;
 
 class ApiUserController extends Controller
 {
     private ApiUserRepositoryInterface $apiUserRepository;
 
+    /**
+     * @param ApiUserRepositoryInterface $apiUserRepository
+     */
     public function __construct(ApiUserRepositoryInterface $apiUserRepository)
     {
         $this->apiUserRepository = $apiUserRepository;
     }
 
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function list(Request $request): JsonResponse
     {
         $result = $this->apiUserRepository->findAllApiUsers();
@@ -28,17 +36,45 @@ class ApiUserController extends Controller
             return response()->json([$result], 200);
         }
 
-        return response()->json([], 402);
+        return response()->json(['error' => $result], 402);
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param SearchApiUsersRequest $request
+     * @return JsonResponse
      */
-    public function index()
+    public function searchApiUsers(SearchApiUsersRequest $request): JsonResponse
     {
-        //
+        if (isset($request->errors)) {
+            return response()->json(['error' => $request->errors], 400);
+        }
+
+        $data = $request->validationData();
+
+        $result = $this->apiUserRepository->getFilteredApiUsers($data);
+
+        if ($result) {
+            return response()->json($result, 200);
+        }
+
+        return response()->json([], 400);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Uuid $id
+     * @return JsonResponse
+     */
+    public function show(Uuid $id): JsonResponse
+    {
+        $result = $this->apiUserRepository->findApiUser($id);
+
+        if ($result) {
+            return response()->json(['data' => $result], 200);
+        }
+
+        return response()->json(['error' => $result], 400);
     }
 
     /**
@@ -49,32 +85,19 @@ class ApiUserController extends Controller
      */
     public function create(CreateApiUserRequest $request): JsonResponse
     {
-        $data = $request->innerValidated($request);
-
-        $id = $this->apiUserRepository->createApiUser($data);
-
-        if ($id) {
-            return response()->json([$id], 200);
+        if (isset($request->errors)) {
+            return response()->json(['error' => $request->errors], 400);
         }
 
-        return response()->json([], 400);
-    }
+        $data = $request->fillData($request);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $result = $this->apiUserRepository->findApiUser($id);
+        $result = $this->apiUserRepository->createApiUser($data);
 
         if ($result) {
-            return response()->json($result, 200);
+            return response()->json(['data' => $data], 200);
         }
 
-        return response()->json($result);
+        return response()->json(['error' => $result], 400);
     }
 
     /**
@@ -83,12 +106,16 @@ class ApiUserController extends Controller
      */
     public function update(UpdateApiUserRequest $request): JsonResponse
     {
+        if (isset($request->errors)) {
+            return response()->json(['error' => $request->errors], 400);
+        }
+
         $data = $request->innerValidated($request);
 
-        $id = $this->apiUserRepository->updateApiUser($data);
+        $result = $this->apiUserRepository->updateApiUser($data);
 
-        if ($id) {
-            return response()->json(['id' => $data['id']], 200);
+        if ($result) {
+            return response()->json(['data' => $data['id']], 200);
         }
 
         return response()->json([], 400);
@@ -97,22 +124,23 @@ class ApiUserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param DeleteApiUserRequest $request
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function delete(DeleteApiUserRequest $request): JsonResponse
     {
-        $result = $this->apiUserRepository->softDeleteApiUser();
+        $data = $request->innerValidated();
 
-        $result = $this->apiUserRepository->findApiUser();
-    }
+        if (isset($request->errors)) {
+            return response()->json(['error' => $request->errors], 400);
+        }
 
-    public function test(Request $request)
-    {
-        $user = new ApiUser();
-        $user->fill(['name' => 'Amsterdam to Frankfurt']);
-        $user->save();
+        $result = $this->apiUserRepository->deleteApiUser($data);
 
-        return response()->json($request->toArray());
+        if ($result > 0) {
+            return response()->json(['data' => ['User deleted!']], 200);
+        }
+
+        return response()->json(['data' => ['User was not deleted!']], 200);
     }
 }

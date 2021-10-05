@@ -2,12 +2,16 @@
 
 namespace App\Helpers\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
 use Ramsey\Uuid\Uuid;
 
 class CreateApiUserRequest extends FormRequest
 {
+    /** @var array|null */
+    public ?array $errors = null;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -36,11 +40,22 @@ class CreateApiUserRequest extends FormRequest
         ];
     }
 
-    public function innerValidated(): array
+    /**
+     * @return array
+     */
+    public function fillData(): array
     {
         $data = $this->validate($this->rules());
-        $this->get('active', false);
 
         return Arr::add($data, 'id', Uuid::uuid4()->toString());
+    }
+
+    /**
+     * @param Validator $validator
+     * @return void
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        $this->errors = Arr::flatten($validator->getMessageBag()->getMessages());
     }
 }
