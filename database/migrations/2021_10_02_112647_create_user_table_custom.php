@@ -25,7 +25,7 @@ class CreateUserTableCustom extends Migration
 
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
-            $table->softDeletes($column = 'deleted_at', $precision = 0);
+            $table->softDeletes();
         });
     }
 
@@ -36,6 +36,8 @@ class CreateUserTableCustom extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::table('flights', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 }
