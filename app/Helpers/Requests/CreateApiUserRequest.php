@@ -31,9 +31,9 @@ class CreateApiUserRequest extends FormRequest
     {
         return [
             'first_name' => 'required|min:2|max:16',
-            'last_name' => [],
-            'phone' => [],
-            'active' => [],
+            'last_name' => 'sometimes|string|min:2|max:16',
+            'phone' => 'sometimes|string|min:2|max:16',
+            'active' => 'sometimes|boolean',
             // Check email!!!
             'email' => 'required|email|unique:api_users,email',
             'password' => [],
