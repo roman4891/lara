@@ -20,5 +20,5 @@ interface ApiUserRepositoryInterface {
 
     public function softDeleteApiUser(string $id): ?int;
 
-    public function forceDeleteApiUser($id): ?int;
+    public function forceDeleteApiUser(string $id): ?int;
 }

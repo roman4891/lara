@@ -106,11 +106,7 @@ class ApiUserRepository implements ApiUserRepositoryInterface
      */
     public function softDeleteApiUser(string $id): ?int
     {
-//        $result = DB::table('users')
-//            ->where('id', '=', $id)
-//            ->delete();
-
-         $result = ApiUser::destroy($id);
+        $result = ApiUser::destroy($id);
 
         if (isset($result)) {
             return $result;
@@ -120,12 +116,14 @@ class ApiUserRepository implements ApiUserRepositoryInterface
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return mixed
      */
-    public function forceDeleteApiUser($id): ?int
+    public function forceDeleteApiUser(string $id): ?int
     {
-        $result = DB::table('users')
+        $this->apiUser->forceDeleting = true;;
+
+        $result = DB::table('api_users')
             ->where('id', '=', $id)
             ->delete();
 

@@ -129,13 +129,20 @@ class ApiUserController extends Controller
      */
     public function delete(DeleteApiUserRequest $request): JsonResponse
     {
+        $result = 0;
         $data = $request->innerValidated();
 
         if (isset($request->errors)) {
             return response()->json(['error' => $request->errors], 400);
         }
 
-        $result = $this->apiUserRepository->deleteApiUser($data);
+        if (isset($data['type']) && $data['type'] === 'soft') {
+            $result = $this->apiUserRepository->softDeleteApiUser($data['id']);
+        }
+
+        if (isset($data['type']) && $data['type'] === 'force') {
+            $result = $this->apiUserRepository->forceDeleteApiUser($data['id']);
+        }
 
         if ($result > 0) {
             return response()->json(['data' => ['User deleted!']], 200);
