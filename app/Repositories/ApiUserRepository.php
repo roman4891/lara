@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Models\ApiUser;
@@ -77,6 +79,7 @@ class ApiUserRepository implements ApiUserRepositoryInterface
         // ApiUser::create...
         $id = DB::table('api_users')->insertGetId($data);
 
+        /** @var string|int $id */
         if ($id) {
             return $id;
         }

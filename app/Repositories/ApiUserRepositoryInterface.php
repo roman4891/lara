@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Helpers\Requests\CreateApiUserCommand;
@@ -8,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ApiUserRepositoryInterface {
 
-    public function getFilteredApiUsers(array $params);
+    public function getFilteredApiUsers(array $params): ?Collection;
 
     public function findAllApiUsers(): ?Collection;
 
