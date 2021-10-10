@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helpers\Requests;
 
+use App\Rules\CheckEmail;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
@@ -37,8 +38,13 @@ class CreateApiUserRequest extends FormRequest
             'phone' => 'sometimes|string|min:2|max:16',
             'active' => 'sometimes|boolean',
             // Check email!!!
-            'email' => 'required|email|unique:api_users,email',
-            'password' => [],
+            'email' => [
+//                'required',
+//                'email',
+//                'unique:api_users,email',
+                new CheckEmail(),
+            ],
+            'password' => 'sometimes|string|min:2',
         ];
     }
 
