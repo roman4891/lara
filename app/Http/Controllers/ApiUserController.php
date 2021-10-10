@@ -120,7 +120,7 @@ class ApiUserController extends Controller
             return response()->json(['data' => $data['id']], 200);
         }
 
-        return response()->json([], 400);
+        return response()->json(['data' => $result], 400);
     }
 
     /**
