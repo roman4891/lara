@@ -39,9 +39,9 @@ class CreateApiUserRequest extends FormRequest
             'active' => 'sometimes|boolean',
             // Check email!!!
             'email' => [
-//                'required',
-//                'email',
-//                'unique:api_users,email',
+                'required',
+                'email',
+                'unique:api_users,email',
                 new CheckEmail(),
             ],
             'password' => 'sometimes|string|min:2',
